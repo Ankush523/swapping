@@ -56,7 +56,6 @@ function App() {
     signer.getAddress().then((address) => {
       setSignerAddress(address);
 
-      // todo: connect weth and uni contracts
       wethContract.balanceOf(address).then((res) => {
         setWethAmount(Number(ethers.utils.formatEther(res)));
       });
@@ -93,10 +92,9 @@ function App() {
         <div className="swapContainer">
           <div className="swapHeader">
             <span className="swapText">Swap</span>
-            <span
-              className="gearContainer"
-              onClick={() => setShowModal(true)}
-            ></span>
+            <span className="gearContainer" onClick={() => setShowModal(true)}>
+              gearicon
+            </span>
             {showModal && (
               <ConfigModal
                 onClose={() => setShowModal(false)}
