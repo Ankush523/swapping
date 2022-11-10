@@ -3,6 +3,9 @@ import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Navbar from "./components/Navbar";
 import ConfigModal from "./components/ConfigModal";
+import { BeatLoader } from "react-spinners";
+import CurrencyField from "./components/CurrencyField";
+import { getContract } from "@wagmi/core";
 
 function App() {
   const [provider, setProvider] = useState(undefined);
@@ -27,6 +30,12 @@ function App() {
     const onLoad = async () => {
       const provider = await new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
+      
+      const wethContract = getWethContract()
+      setWethContract(wethContract)
+
+      const uniContract = getUniContract()
+      setUniContract(uniContract)
     };
     onLoad();
   }, []);
@@ -42,6 +51,16 @@ function App() {
   const getWalletAddress = () => {
     signer.getAddress().then((address) => {
       setSignerAddress(address);
+
+      wethContract.balanceOf(address)
+      .then(res => {
+        setWethAmount(Number(ethers.utils.formatEther(res)))
+      })
+
+      uniContract .balanceOf(address)
+      .then(res => {
+        setUniAmount(Number(ethers.utils.formatEther(res)))
+      })
     });
   };
 
@@ -54,7 +73,7 @@ function App() {
       <div className="swapContainer">
         <div className="swapHeader">
           <span className="swaptext">Swap</span>
-          <span className="gearContainer">GearIcon</span>
+          <span className="gearContainer" onClick={() => setShowModal(true)}>GearIcon</span>
           {showModal && (
             <ConfigModal
               onClose={() => setShowModal(false)}
@@ -64,6 +83,11 @@ function App() {
               slippageAmount={slippageAmount}
             />
           )}
+        </div>
+
+        <div className="swapbody">
+           <CurrencyField field="input" tokenName="WETH" getSwapPrice={getSwapPrice} signer={signer} balance={wethAmount}/>
+           <CurrencyField field="output" tokenName="UNI" value={outputAmount} signer={signer} balance={uniAmount} spinner={BeatLoader} loading={loading}/>
         </div>
       </div>
     </div>
