@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect } from "react";
+import { ethers } from "ethers";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [provider, setProvider] = useState(undefined);
+  const [signer, setSigner] = useState(undefined);
+  const [signerAddress, setSignerAddress] = useState(undefined);
+
+  useEffect(() => {
+    const onLoad = async () => {
+      const provider = await new ethers.provider.Web3Provider(window.ethereum);
+      setProvider(provider);
+    };
+    onLoad();
+  }, []);
+
+  const getSigner = async () => {
+    provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    setSigner(signer);
+  };
+
+  const isConnected = () => signer !== undefined;
+
+  const getWalletAddress = () => {
+    signer.getAddress().then((address) => {
+      setSignerAddress(address);
+    });
+  };
+
+  if (signer !== undefined) {
+    getWalletAddress();
+  }
+
+  
+
+  return <div className="App"></div>;
 }
 
 export default App;
