@@ -1,27 +1,32 @@
 import React from 'react'
 
 const CurrencyField = props => {
-    const getPrice = (value) => {
-        props.getSwapPrice(value)
-    }
-  return (
-    <div className='row currencyinput'>
-        <div className='numbercontainer'>
-            {props.loading ? (
-                <div className='spinnercontainer'>
-                    <props.spinner/>
-                </div>
-            ):(
-                <input className='currencyinputfield' placeholder='0.0' value={props.value} onBlur={e => (props.field === 'input ?' ? getPrice(e.target.value) : null)}/>
-            )}
-        </div>
+  const getPrice = (value) => {
+    props.getSwapPrice(value)
+  }
 
-        <div className='tokencontainer'>
-            <span className='tokenname'>{props.tokenName}</span>
-            <div className='balancecontainer'>
-                <span className='balanceamount'>Balance : {props.balance?.toFixed(3)}</span>
-            </div>
+  return (
+    <div className="row currencyInput">
+      <div className="col-md-6 numberContainer">
+        {props.loading ? (
+          <div className="spinnerContainer">
+            <props.spinner />
+          </div>
+        ) : (
+          <input
+            className="currencyInputField"
+            placeholder="0.0"
+            value={props.value}
+            onBlur={e => (props.field === 'input' ? getPrice(e.target.value) : null)}
+          />
+        )}
+      </div>
+      <div className="col-md-6 tokenContainer">
+        <span className="tokenName">{props.tokenName}</span>
+        <div className="balanceContainer">
+          <span className="balanceAmount">Balance: {props.balance?.toFixed(3)}</span>
         </div>
+      </div>
     </div>
   )
 }
