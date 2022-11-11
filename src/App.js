@@ -8,10 +8,13 @@ import CurrencyField from "./components/CurrencyField";
 import BeatLoader from "react-spinners/BeatLoader";
 import {
   getWethContract,
-  getUniContract,
+  getMaticContract,
   getPrice,
   runSwap,
 } from "./AlphaRouterService";
+
+import mabi from "./ABIs/MaticABI.json"
+import wabi from "./ABIs/WethABI.json"
 
 function App() {
   const [provider, setProvider] = useState(undefined);
@@ -28,20 +31,20 @@ function App() {
   const [loading, setLoading] = useState(undefined);
   const [ratio, setRatio] = useState(undefined);
   const [wethContract, setWethContract] = useState(undefined);
-  const [uniContract, setUniContract] = useState(undefined);
+  const [maticContract, setMaticContract] = useState(undefined);
   const [wethAmount, setWethAmount] = useState(undefined);
-  const [uniAmount, setUniAmount] = useState(undefined);
+  const [maticAmount, setMaticAmount] = useState(undefined);
 
   useEffect(() => {
     const onLoad = async () => {
       const provider = await new ethers.providers.Web3Provider(window.ethereum);
       setProvider(provider);
 
-      const wethContract = getWethContract();
+      const wethContract = new ethers.Contract("0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",wabi,provider)
       setWethContract(wethContract);
 
-      const uniContract = getUniContract();
-      setUniContract(uniContract);
+      const maticContract = new ethers.Contract("0x0000000000000000000000000000000000001010",mabi,provider);
+      setMaticContract(maticContract);
     };
     onLoad();
   }, []);
@@ -59,8 +62,8 @@ function App() {
       wethContract.balanceOf(address).then((res) => {
         setWethAmount(Number(ethers.utils.formatEther(res)));
       });
-      uniContract.balanceOf(address).then((res) => {
-        setUniAmount(Number(ethers.utils.formatEther(res)));
+      maticContract.balanceOf(address).then((res) => {
+        setMaticAmount(Number(ethers.utils.formatEther(res)));
       });
     });
   };
@@ -116,17 +119,17 @@ function App() {
             />
             <CurrencyField
               field="output"
-              tokenName="UNI"
+              tokenName="MATIC"
               value={outputAmount}
               signer={signer}
-              balance={uniAmount}
+              balance={maticAmount}
               spinner={BeatLoader}
               loading={loading}
             />
           </div>
 
           <div className="ratioContainer">
-            {ratio && <>{`1 UNI = ${ratio} WETH`}</>}
+            {ratio && <>{`1 MATIC = ${ratio} WETH`}</>}
           </div>
 
           <div className="swapButtonContainer">
